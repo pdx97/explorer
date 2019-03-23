@@ -81,6 +81,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/object_button"
             android:background="@drawable/mic"
             android:gravity="center"
             android:layout_gravity="center"
