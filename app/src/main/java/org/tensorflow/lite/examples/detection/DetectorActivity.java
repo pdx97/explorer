@@ -23,12 +23,18 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -63,6 +69,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final float TEXT_SIZE_DIP = 10;
   OverlayView trackingOverlay;
   private Integer sensorOrientation;
+  private EditText getUserInput;
+  private Button checkForObject;
 
   private Classifier detector;
 
@@ -83,6 +91,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private byte[] luminanceCopy;
 
   private BorderedText borderedText;
+
+  private String input_text;
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -133,6 +143,17 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
     cropToFrameTransform = new Matrix();
     frameToCropTransform.invert(cropToFrameTransform);
+
+    checkForObject = findViewById(R.id.object_button);
+    getUserInput = findViewById(R.id.get_text);
+
+    checkForObject.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        input_text = String.valueOf(getUserInput.getText());
+        Log.i("InputValue",input_text);
+      }
+    });
 
     trackingOverlay = (OverlayView) findViewById(R.id.tracking_overlay);
     trackingOverlay.addCallback(
@@ -212,13 +233,16 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             for (final Classifier.Recognition result : results) {
               final RectF location = result.getLocation();
-              if (location != null && result.getConfidence() >= minimumConfidence) {
+              LOGGER.i("Chcekpoint,%s", result.getTitle());
+              if (location != null && result.getConfidence() >= minimumConfidence && result.getTitle().equals(input_text)) {
                 canvas.drawRect(location, paint);
 
                 cropToFrameTransform.mapRect(location);
 
                 result.setLocation(location);
-                mappedRecognitions.add(result);
+//                mappedRecognitions.add(result);
+
+                LOGGER.i("LogLogic, %s", "dekhPrakhar");
               }
             }
 
@@ -227,15 +251,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
             computingDetection = false;
 
-            runOnUiThread(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    showFrameInfo(previewWidth + "x" + previewHeight);
-                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-                    showInference(lastProcessingTimeMs + "ms");
-                  }
-                });
+//            runOnUiThread(
+//                new Runnable() {
+//                  @Override
+//                  public void run() {
+//                    showFrameInfo(previewWidth + "x" + previewHeight);
+//                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
+//                    showInference(lastProcessingTimeMs + "ms");
+//                  }
+//                });
           }
         });
   }
