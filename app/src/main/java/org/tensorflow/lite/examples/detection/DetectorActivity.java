@@ -170,6 +170,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     checkForObject.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+        CSVTokens.clear();
         input_text = String.valueOf(getUserInput.getText());
         List<String> tempTokens = Arrays.asList(input_text.split(","));
         if (!tempTokens.isEmpty()){
