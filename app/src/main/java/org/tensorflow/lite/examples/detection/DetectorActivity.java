@@ -250,32 +250,21 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
               // speaking out the result in intelligent manner
               for (final Classifier.Recognition result : results) {
-                  String toSpeak = result.getTitle();
-                  LOGGER.i("Get title %s", result.getTitle());
-                  final RectF location = result.getLocation();
-                  LOGGER.d("toSpeak " + toSpeak);
-                  if (location != null && result.getConfidence() >= minimumConfidence &&
-                          result.getTitle().equals(input_text) && !labelCache.containsKey(toSpeak)) {
-                          text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-                          labelCache.put(toSpeak, toSpeak, 3*SLEEP_MULTIPLIER);
-                  }
+                String toSpeak = result.getTitle();
+                LOGGER.i("Get title %s", result.getTitle());
+                final RectF location = result.getLocation();
+                LOGGER.d("toSpeak " + toSpeak);
+                if (location != null && result.getConfidence() >= minimumConfidence &&
+                        result.getTitle().equals(input_text) && !labelCache.containsKey(toSpeak)) {
+                  text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+                  labelCache.put(toSpeak, toSpeak, 3 * SLEEP_MULTIPLIER);
+                }
+
               }
-
-
             tracker.trackResults(mappedRecognitions, luminanceCopy, currTimestamp);
             trackingOverlay.postInvalidate();
 
             computingDetection = false;
-
-//            runOnUiThread(
-//                new Runnable() {
-//                  @Override
-//                  public void run() {
-//                    showFrameInfo(previewWidth + "x" + previewHeight);
-//                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-//                    showInference(lastProcessingTimeMs + "ms");
-//                  }
-//                });
           }
         });
   }
