@@ -22,16 +22,19 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import java.util.List;
+import org.tensorflow.lite.examples.detection.env.Logger;
 import org.tensorflow.lite.examples.detection.tflite.Classifier.Recognition;
 
 public class RecognitionScoreView extends View implements ResultsView {
-  private static final float TEXT_SIZE_DIP = 14;
-  private final float textSizePx;
-  private final Paint fgPaint;
-  private final Paint bgPaint;
-  private List<Recognition> results;
 
-  public RecognitionScoreView(final Context context, final AttributeSet set) {
+    private static final Logger LOGGER = new Logger();
+    private static final float TEXT_SIZE_DIP = 14;
+    private final float textSizePx;
+    private final Paint fgPaint;
+    private final Paint bgPaint;
+    private List<Recognition> results;
+
+    public RecognitionScoreView(final Context context, final AttributeSet set) {
     super(context, set);
 
     textSizePx =
@@ -42,16 +45,16 @@ public class RecognitionScoreView extends View implements ResultsView {
 
     bgPaint = new Paint();
     bgPaint.setColor(0xcc4285f4);
-  }
+    }
 
-  @Override
-  public void setResults(final List<Recognition> results) {
+    @Override
+    public void setResults(final List<Recognition> results) {
     this.results = results;
     postInvalidate();
-  }
+    }
 
-  @Override
-  public void onDraw(final Canvas canvas) {
+    @Override
+    public void onDraw(final Canvas canvas) {
     final int x = 10;
     int y = (int) (fgPaint.getTextSize() * 1.5f);
 
@@ -63,5 +66,5 @@ public class RecognitionScoreView extends View implements ResultsView {
         y += (int) (fgPaint.getTextSize() * 1.5f);
       }
     }
-  }
+    }
 }

@@ -48,6 +48,10 @@ import org.tensorflow.lite.examples.detection.tflite.Classifier;
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
 
+import org.tensorflow.lite.examples.detection.env.SelfExpiringHashMap;
+import org.tensorflow.lite.examples.detection.env.SelfExpiringMap;
+import android.speech.tts.TextToSpeech;
+import java.util.Locale;
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
@@ -92,6 +96,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   private BorderedText borderedText;
 
+  private TextToSpeech text2speech;
+
+  private SelfExpiringMap<String, String> labelCache = new SelfExpiringHashMap<>();
+  private final static int SLEEP_MULTIPLIER = 750;
   private String input_text;
 
   @Override
@@ -166,6 +174,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             }
           }
         });
+
+      text2speech=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+          @Override
+          public void onInit(int status) {
+              if(status != TextToSpeech.ERROR) {
+                  text2speech.setLanguage(Locale.UK);
+              }
+          }
+      });
   }
 
   @Override
@@ -231,35 +248,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             final List<Classifier.Recognition> mappedRecognitions =
                 new LinkedList<Classifier.Recognition>();
 
-            for (final Classifier.Recognition result : results) {
-              final RectF location = result.getLocation();
-              LOGGER.i("Chcekpoint,%s", result.getTitle());
-              if (location != null && result.getConfidence() >= minimumConfidence && result.getTitle().equals(input_text)) {
-                canvas.drawRect(location, paint);
+              // speaking out the result in intelligent manner
+              for (final Classifier.Recognition result : results) {
+                String toSpeak = result.getTitle();
+                LOGGER.i("Get title %s", result.getTitle());
+                final RectF location = result.getLocation();
+                LOGGER.d("toSpeak " + toSpeak);
+                if (location != null && result.getConfidence() >= minimumConfidence &&
+                        result.getTitle().equals(input_text) && !labelCache.containsKey(toSpeak)) {
+                  text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+                  labelCache.put(toSpeak, toSpeak, 3 * SLEEP_MULTIPLIER);
+                }
 
-                cropToFrameTransform.mapRect(location);
-
-                result.setLocation(location);
-//                mappedRecognitions.add(result);
-
-                LOGGER.i("LogLogic, %s", "dekhPrakhar");
               }
-            }
-
             tracker.trackResults(mappedRecognitions, luminanceCopy, currTimestamp);
             trackingOverlay.postInvalidate();
 
             computingDetection = false;
-
-//            runOnUiThread(
-//                new Runnable() {
-//                  @Override
-//                  public void run() {
-//                    showFrameInfo(previewWidth + "x" + previewHeight);
-//                    showCropInfo(cropCopyBitmap.getWidth() + "x" + cropCopyBitmap.getHeight());
-//                    showInference(lastProcessingTimeMs + "ms");
-//                  }
-//                });
           }
         });
   }
