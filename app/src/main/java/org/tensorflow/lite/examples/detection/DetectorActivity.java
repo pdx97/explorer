@@ -37,6 +37,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
@@ -101,6 +104,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private SelfExpiringMap<String, String> labelCache = new SelfExpiringHashMap<>();
   private final static int SLEEP_MULTIPLIER = 750;
   private String input_text;
+  private List<String> CSVTokens = new ArrayList<String>();
 
   @Override
   public void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -159,7 +163,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       @Override
       public void onClick(View view) {
         input_text = String.valueOf(getUserInput.getText());
-        Log.i("InputValue",input_text);
+        List<String> tempTokens = Arrays.asList(input_text.split(","));
+        if (!tempTokens.isEmpty()){
+          for (final String str: tempTokens){
+            String clean_tok = str.trim().toLowerCase();
+            if (clean_tok.length() >0) {
+              CSVTokens.add(clean_tok);
+            }
+          }
+        }
       }
     });
 
@@ -251,11 +263,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
               // speaking out the result in intelligent manner
               for (final Classifier.Recognition result : results) {
                 String toSpeak = result.getTitle();
-                LOGGER.i("Get title %s", result.getTitle());
                 final RectF location = result.getLocation();
                 LOGGER.d("toSpeak " + toSpeak);
                 if (location != null && result.getConfidence() >= minimumConfidence &&
-                        result.getTitle().equals(input_text) && !labelCache.containsKey(toSpeak)) {
+                        !CSVTokens.isEmpty() && CSVTokens.contains(result.getTitle()) &&
+                        !labelCache.containsKey(toSpeak)) {
+
+                  LOGGER.i("Get title %s | %s", CSVTokens, result.getTitle());
+
                   text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
                   labelCache.put(toSpeak, toSpeak, 3 * SLEEP_MULTIPLIER);
                 }
