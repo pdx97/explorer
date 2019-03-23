@@ -93,9 +93,9 @@ public abstract class CameraActivity extends AppCompatActivity
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     setContentView(R.layout.activity_camera);
-    Toolbar toolbar = findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
+//    Toolbar toolbar = findViewById(R.id.toolbar);
+//    setSupportActionBar(gt );
+//    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     if (hasPermission()) {
       setFragment();
@@ -103,9 +103,9 @@ public abstract class CameraActivity extends AppCompatActivity
       requestPermission();
     }
 
-    threadsTextView = findViewById(R.id.threads);
-    plusImageView = findViewById(R.id.plus);
-    minusImageView = findViewById(R.id.minus);
+//    threadsTextView = findViewById(R.id.threads);
+//    plusImageView = findViewById(R.id.plus);
+//    minusImageView = findViewById(R.id.minus);
     apiSwitchCompat = findViewById(R.id.api_info_switch);
     bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
     gestureLayout = findViewById(R.id.gesture_layout);
@@ -159,14 +159,14 @@ public abstract class CameraActivity extends AppCompatActivity
           public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
         });
 
-    frameValueTextView = findViewById(R.id.frame_info);
-    cropValueTextView = findViewById(R.id.crop_info);
-    inferenceTimeTextView = findViewById(R.id.inference_info);
+//    frameValueTextView = findViewById(R.id.frame_info);
+//    cropValueTextView = findViewById(R.id.crop_info);
+//    inferenceTimeTextView = findViewById(R.id.inference_info);
 
     apiSwitchCompat.setOnCheckedChangeListener(this);
 
-    plusImageView.setOnClickListener(this);
-    minusImageView.setOnClickListener(this);
+//    plusImageView.setOnClickListener(this);
+//    minusImageView.setOnClickListener(this);
   }
 
   protected int[] getRgbBytes() {
@@ -497,35 +497,35 @@ public abstract class CameraActivity extends AppCompatActivity
 
   @Override
   public void onClick(View v) {
-    if (v.getId() == R.id.plus) {
-      String threads = threadsTextView.getText().toString().trim();
-      int numThreads = Integer.parseInt(threads);
-      if (numThreads >= 9) return;
-      numThreads++;
-      threadsTextView.setText(String.valueOf(numThreads));
-      setNumThreads(numThreads);
-    } else if (v.getId() == R.id.minus) {
-      String threads = threadsTextView.getText().toString().trim();
-      int numThreads = Integer.parseInt(threads);
-      if (numThreads == 1) {
-        return;
-      }
-      numThreads--;
-      threadsTextView.setText(String.valueOf(numThreads));
-      setNumThreads(numThreads);
-    }
+//    if (v.getId() == R.id.plus) {
+//      String threads = threadsTextView.getText().toString().trim();
+//      int numThreads = Integer.parseInt(threads);
+//      if (numThreads >= 9) return;
+//      numThreads++;
+//      threadsTextView.setText(String.valueOf(numThreads));
+//      setNumThreads(numThreads);
+//    } else if (v.getId() == R.id.minus) {
+//      String threads = threadsTextView.getText().toString().trim();
+//      int numThreads = Integer.parseInt(threads);
+//      if (numThreads == 1) {
+//        return;
+//      }
+//      numThreads--;
+//      threadsTextView.setText(String.valueOf(numThreads));
+//      setNumThreads(numThreads);
+//    }
   }
 
   protected void showFrameInfo(String frameInfo) {
-    frameValueTextView.setText(frameInfo);
+//    frameValueTextView.setText(frameInfo);
   }
 
   protected void showCropInfo(String cropInfo) {
-    cropValueTextView.setText(cropInfo);
+//    cropValueTextView.setText(cropInfo);
   }
 
   protected void showInference(String inferenceTime) {
-    inferenceTimeTextView.setText(inferenceTime);
+//    inferenceTimeTextView.setText(inferenceTime);
   }
 
   protected abstract void processImage();
