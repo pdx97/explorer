@@ -86,7 +86,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private Vibrator vibrator;
 
 
-    private Classifier detector;
+  private Classifier detector;
 
   private long lastProcessingTimeMs;
   private Bitmap rgbFrameBitmap = null;
@@ -278,19 +278,15 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 for (final Classifier.Recognition result : results) {
                   String toSpeak = result.getTitle();
                   final RectF location = result.getLocation();
-                  LOGGER.d("toSpeak " + toSpeak+ " location: "+location.toString());
+                  LOGGER.d("toSpeak " + toSpeak);
                   if (location != null && result.getConfidence() >= minimumConfidence &&
                           !CSVTokens.isEmpty() && CSVTokens.contains(result.getTitle()) &&
                           !labelCache.containsKey(toSpeak)) {
 
-                      canvas.drawRect(location, paint);
-                      cropToFrameTransform.mapRect(location);
-                      result.setLocation(location);
-                      LOGGER.i("Get title %s | %s", result.getTitle(),location);
+                    LOGGER.i("Get title %s | %s", CSVTokens, result.getTitle());
 
-                      mappedRecognitions.add(result);
-                      text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-                      labelCache.put(toSpeak, toSpeak, 3 * SLEEP_MULTIPLIER);
+                    text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
+                    labelCache.put(toSpeak, toSpeak, 3 * SLEEP_MULTIPLIER);
                   }
 
                 }
