@@ -1,4 +1,4 @@
-# Chasma : Your companion
+# Chasma 
 
 ![chasma_icon](./app/src/main/res/drawable-xxxhdpi/vision.png )
 
