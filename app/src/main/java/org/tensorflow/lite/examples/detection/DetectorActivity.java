@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -289,7 +290,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     String toSpeak = label +" in "+gridNum;
                     LOGGER.d("toSpeak " + toSpeak);
                     text2speech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
-                    labelCache.put(label, label, 4 * SLEEP_MULTIPLIER);
+                    Random rn = new Random();
+                    int rand_int = rn.nextInt(8 -  + 3) + 3;
+                    labelCache.put(label, label, rand_int * SLEEP_MULTIPLIER);
                   }
 
                 }
@@ -318,12 +321,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   }
 
   private int getGridNum(RectF location, Size grid){
-    int gridNum=0;
-    Size cent_loc = new Size((int)(location.left + location.right)/2, (int)(location.top + location.bottom)/2);
+    int gridNum=7;
+    Size cent_loc = new Size(  (int)(location.top + location.bottom)/2, (int)(location.left + location.right)/2);
     for (int i =1;i<=3;i++){
       for (int j=1;j<=3;j++){
-        if(cent_loc.getWidth() <= i*grid.getWidth()/3 && cent_loc.getHeight() <= j*grid.getHeight())
-          return (j-1)*3+i;
+        if(cent_loc.getWidth() <= i*grid.getWidth()/3 && cent_loc.getHeight() <= j*grid.getHeight()/3)
+          return (j-1)*3+j;
       }
     }
 
