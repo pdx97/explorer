@@ -291,7 +291,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     //LOGGER.d("toSpeak " + toSpeak);
                     text2speech.speak(label, TextToSpeech.QUEUE_FLUSH, null);
                     Random rn = new Random();
-                    int rand_int = rn.nextInt(8 -  + 3) + 3;
+                    int rand_int = rn.nextInt(6 - 2) + 2;
                     labelCache.put(label, label, rand_int * SLEEP_MULTIPLIER);
                   }
 
@@ -325,7 +325,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     Size cent_loc = new Size(  (int)(location.top + location.bottom)/2, (int)(location.left + location.right)/2);
     for (int i =1;i<=3;i++){
       for (int j=1;j<=3;j++){
-        if(cent_loc.getWidth() <= i*grid.getWidth()/3 && cent_loc.getHeight() <= j*grid.getHeight()/3)
+        if(cent_loc.getWidth() <= i*grid.getWidth()/3 &&
+           cent_loc.getHeight() <= j*grid.getHeight()/3 &&
+           cent_loc.getHeight() > (j-1)*grid.getHeight()/3 &&
+           cent_loc.getWidth() > (i-1)*grid.getHeight()/3)
           return (j-1)*3+j;
       }
     }
