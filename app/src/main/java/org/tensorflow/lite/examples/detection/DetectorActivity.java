@@ -283,13 +283,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                           !CSVTokens.isEmpty() && CSVTokens.contains(result.getTitle()) &&
                           !labelCache.containsKey(label)) {
 
-                    canvas.drawRect(location, paint);
-                    cropToFrameTransform.mapRect(location);
-                    int gridNum = getGridNum(location, DESIRED_PREVIEW_SIZE);
-                    LOGGER.d("gridNum " + gridNum);
-                    String toSpeak = label +" in "+gridNum;
-                    LOGGER.d("toSpeak " + toSpeak);
-                    text2speech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                    //canvas.drawRect(location, paint);
+                    //cropToFrameTransform.mapRect(location);
+                    //int gridNum = getGridNum(location, DESIRED_PREVIEW_SIZE);
+                    //LOGGER.d("gridNum " + gridNum);
+                    //String toSpeak = label +" in "+gridNum;
+                    //LOGGER.d("toSpeak " + toSpeak);
+                    text2speech.speak(label, TextToSpeech.QUEUE_FLUSH, null);
                     Random rn = new Random();
                     int rand_int = rn.nextInt(6 - 2) + 2;
                     labelCache.put(label, label, rand_int * SLEEP_MULTIPLIER);
