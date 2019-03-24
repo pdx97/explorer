@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import org.tensorflow.lite.examples.detection.customview.OverlayView;
 import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
 import org.tensorflow.lite.examples.detection.env.BorderedText;
@@ -72,11 +73,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
-  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+  private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.4f;
   private static final boolean MAINTAIN_ASPECT = false;
   private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-  private static final Size DESIRED_GRID_TOP_LEFT = new Size(70, 80);
-  private static final Size DESIRED_GRID_BOTTOM_RIGHT = new Size(570, 420);
+
   private static final boolean SAVE_PREVIEW_BITMAP = false;
   private static final float TEXT_SIZE_DIP = 10;
   OverlayView trackingOverlay;
@@ -205,7 +205,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
       @Override
       public void onInit(int status) {
         if(status != TextToSpeech.ERROR) {
-          text2speech.setLanguage(Locale.UK);
+          text2speech.setLanguage(Locale.US);
         }
       }
     });
@@ -276,17 +276,23 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
                 // speaking out the result in intelligent manner
                 for (final Classifier.Recognition result : results) {
-                  String toSpeak = result.getTitle();
+                  String label = result.getTitle();
                   final RectF location = result.getLocation();
-                  LOGGER.d("toSpeak " + toSpeak);
+                  //LOGGER.d("toSpeak " + label);
                   if (location != null && result.getConfidence() >= minimumConfidence &&
                           !CSVTokens.isEmpty() && CSVTokens.contains(result.getTitle()) &&
-                          !labelCache.containsKey(toSpeak)) {
+                          !labelCache.containsKey(label)) {
 
-                    LOGGER.i("Get title %s | %s", CSVTokens, result.getTitle());
-
-                    text2speech.speak(toSpeak, TextToSpeech.QUEUE_ADD, null);
-                    labelCache.put(toSpeak, toSpeak, 3 * SLEEP_MULTIPLIER);
+                    canvas.drawRect(location, paint);
+                    cropToFrameTransform.mapRect(location);
+                    int gridNum = getGridNum(location, DESIRED_PREVIEW_SIZE);
+                    LOGGER.d("gridNum " + gridNum);
+                    String toSpeak = label +" in "+gridNum;
+                    LOGGER.d("toSpeak " + toSpeak);
+                    text2speech.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
+                    Random rn = new Random();
+                    int rand_int = rn.nextInt(8 -  + 3) + 3;
+                    labelCache.put(label, label, rand_int * SLEEP_MULTIPLIER);
                   }
 
                 }
@@ -312,6 +318,19 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   // checkpoints.
   private enum DetectorMode {
     TF_OD_API;
+  }
+
+  private int getGridNum(RectF location, Size grid){
+    int gridNum=7;
+    Size cent_loc = new Size(  (int)(location.top + location.bottom)/2, (int)(location.left + location.right)/2);
+    for (int i =1;i<=3;i++){
+      for (int j=1;j<=3;j++){
+        if(cent_loc.getWidth() <= i*grid.getWidth()/3 && cent_loc.getHeight() <= j*grid.getHeight()/3)
+          return (j-1)*3+j;
+      }
+    }
+
+    return gridNum;
   }
 
   @Override
