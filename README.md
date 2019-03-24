@@ -37,4 +37,5 @@ Prateek Jha<br>
  <br>Prakhar Dixit
  <br>https://github.com/pdx97 
  
+ ## Try it out on android:
  [Download APK](https://drive.google.com/file/d/1Ir_t_jC8VY07aHrxtKXGM1P3H1pVvQwX/view?usp=sharing)
